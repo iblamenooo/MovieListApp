@@ -13,6 +13,9 @@ final class MediaDetailsViewModel {
     private let watchedStore: WatchlistStoring
     private let watchlistStore: WatchlistStoring
     var onVideoUpdate: ((String?) -> Void)?
+    /// The trailer the header button opens; nil until one is found, and after it if
+    /// TMDB has none.
+    private(set) var videoKey: String?
     var onCreditsUpdate: (() -> Void)?
     var actors: [Actor] = []
     /// Not shown on this screen — the carousel is cast only — but carried here so the
@@ -157,17 +160,6 @@ final class MediaDetailsViewModel {
             : "TMDB doesn't list a cast for this title yet"
     }
 
-    /// Same distinction for the trailer: offline is not the same as "no trailer exists".
-    var trailerPlaceholderTitle: String {
-        monitor.isOnline ? "No trailer yet" : "You're offline"
-    }
-
-    var trailerPlaceholderSubtitle: String {
-        monitor.isOnline
-            ? "We'll show it here as soon as one is available"
-            : "The trailer will load when you reconnect"
-    }
-
     /// Retries whichever pieces came back empty once a connection returns.
     func connectivityDidChange() {
         guard monitor.isOnline else { return }
@@ -217,8 +209,15 @@ final class MediaDetailsViewModel {
     
     func fetchTrailer() {
         service.fetchVideo(for: media.id, type: mediaType) { [weak self] key in
+            self?.videoKey = key
             self?.onVideoUpdate?(key)
         }
+    }
+
+    /// Nil when there is nothing to play, which is also when the button is hidden.
+    var trailerRequest: URLRequest? {
+        guard let key = videoKey else { return nil }
+        return youtubeRequest(for: key)
     }
     
     func fetchCredits() {

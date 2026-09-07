@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import WebKit
 
 final class MediaDetailsViewController: UIViewController {
 
@@ -19,11 +18,10 @@ final class MediaDetailsViewController: UIViewController {
     /// How much of the scroll view the keyboard currently covers.
     private var keyboardOverlap: CGFloat = 0
 
-    /// Opens scrolled to the trailer, for an entry point whose action was "play" rather
-    /// than "show me this film" — home's hero button.
+    /// Opens straight into the trailer, for an entry point whose action was "play"
+    /// rather than "show me this film" — home's hero button.
     private let revealsTrailer: Bool
-    /// Only on the first trailer to arrive; scrolling the screen out from under someone
-    /// who has since started reading would be worse than not scrolling at all.
+    /// Guards that push to the first trailer to arrive; see `openTrailerIfRequested`.
     private var didRevealTrailer = false
 
     init(viewModel: MediaDetailsViewModel, revealsTrailer: Bool = false) {
@@ -56,21 +54,45 @@ final class MediaDetailsViewController: UIViewController {
         return label
     }()
 
-    /// The one thing you can tell the app about a film without writing anything.
-    /// Sits beside the title, so it is sized to a caption rather than a full-width bar.
-    private lazy var watchedButton: UIButton = {
+    /// The way into the trailer, beside the title where the artwork it belongs to is.
+    /// Hidden until a trailer is known to exist — a button that leads to an empty
+    /// player is worse than no button.
+    private lazy var trailerButton: UIButton = {
         var config = UIButton.Configuration.filled()
-        config.cornerStyle = .fixed
-        config.background.cornerRadius = 14
+        config.cornerStyle = .capsule
+        config.baseBackgroundColor = .accent
+        config.baseForegroundColor = .onAccent
         config.imagePadding = 6
-        config.titleLineBreakMode = .byWordWrapping
-        config.titleAlignment = .center
-        config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12)
+        config.image = UIImage(
+            systemName: "play.fill",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+        )
+        config.attributedTitle = AttributedString(
+            "Trailer",
+            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+        )
+        config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 18)
         let button = UIButton(configuration: config)
-        button.addTarget(self, action: #selector(watchedTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(trailerTapped), for: .touchUpInside)
         // The title yields to it, so the film name wraps instead of the button shrinking.
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.setContentHuggingPriority(.required, for: .horizontal)
+        button.isHidden = true
+        button.accessibilityHint = "Plays the trailer"
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    /// The one thing you can tell the app about a film without writing anything. A
+    /// full-width bar under the review card, in the same shape as Save Review — the two
+    /// are the same kind of statement about a film you've seen.
+    private lazy var watchedButton: UIButton = {
+        var config = UIButton.Configuration.filled()
+        config.cornerStyle = .medium
+        config.imagePadding = 6
+        config.contentInsets = NSDirectionalEdgeInsets(top: 11, leading: 18, bottom: 11, trailing: 18)
+        let button = UIButton(configuration: config)
+        button.addTarget(self, action: #selector(watchedTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -197,27 +219,6 @@ final class MediaDetailsViewController: UIViewController {
         return view
     }()
 
-    private let videoLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .semibold)
-        label.text = "Trailer"
-        label.numberOfLines = 0
-        label.textColor = .textPrimary
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let videoPlayerView: WKWebView = {
-        let webView = WKWebView()
-        webView.backgroundColor = .canvas
-        webView.isOpaque = false
-        webView.scrollView.isScrollEnabled = false
-        webView.clipsToBounds = true
-        webView.layer.cornerRadius = 12
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        return webView
-    }()
-
     // Held as properties so the copy can switch between "empty" and "failed".
     private let castPlaceholderTitleLabel: UILabel = {
         let label = UILabel()
@@ -273,62 +274,6 @@ final class MediaDetailsViewController: UIViewController {
         return container
     }()
 
-    private let trailerPlaceholderTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 19, weight: .semibold)
-        label.textColor = .textPrimary
-        return label
-    }()
-
-    private let trailerPlaceholderSubtitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .textSecondary
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        return label
-    }()
-
-    private lazy var trailerPlaceholderView: UIView = {
-        let container = UIView()
-        container.backgroundColor = .surface
-        container.layer.cornerRadius = 12
-        container.layer.borderWidth = 1
-        container.trackInterfaceStyle {
-            $0.layer.borderColor = UIColor.textPrimary.withAlphaComponent(0.16).cgColor
-        }
-        container.isHidden = true
-        container.translatesAutoresizingMaskIntoConstraints = false
-
-        let symbol = UIImage(
-            systemName: "video.slash.fill",
-            withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-        )
-        let iconView = UIImageView(image: symbol)
-        iconView.tintColor = .textSecondary
-        iconView.contentMode = .scaleAspectFit
-
-        let stack = UIStackView(arrangedSubviews: [
-            iconView,
-            self.trailerPlaceholderTitleLabel,
-            self.trailerPlaceholderSubtitleLabel
-        ])
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 6
-        stack.setCustomSpacing(16, after: iconView)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-
-        container.addSubview(stack)
-        NSLayoutConstraint.activate([
-            stack.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            stack.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-            stack.leadingAnchor.constraint(greaterThanOrEqualTo: container.leadingAnchor, constant: 24),
-            stack.trailingAnchor.constraint(lessThanOrEqualTo: container.trailingAnchor, constant: -24)
-        ])
-        return container
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .canvas
@@ -340,7 +285,6 @@ final class MediaDetailsViewController: UIViewController {
             self, selector: #selector(connectivityChanged),
             name: NetworkMonitor.connectivityDidChangeNotification, object: nil
         )
-        renderTrailerPlaceholder()
         configure()
         bindViewModel()
         renderWatchedState()
@@ -389,18 +333,10 @@ final class MediaDetailsViewController: UIViewController {
         viewModel.onWatchedChange = { [weak self] in
             self?.renderWatchedState()
         }
-        viewModel.onVideoUpdate = { [weak self] key in
+        viewModel.onVideoUpdate = { [weak self] _ in
             guard let self = self else { return }
-            if let videoKey = key, let request = self.viewModel.youtubeRequest(for: videoKey) {
-                self.videoPlayerView.isHidden = false
-                self.trailerPlaceholderView.isHidden = true
-                self.videoPlayerView.load(request)
-                self.revealTrailerIfNeeded()
-            } else {
-                self.videoPlayerView.isHidden = true
-                self.renderTrailerPlaceholder()
-                self.trailerPlaceholderView.isHidden = false
-            }
+            self.trailerButton.isHidden = self.viewModel.trailerRequest == nil
+            self.openTrailerIfRequested()
         }
         viewModel.onCreditsUpdate = { [weak self] in
             DispatchQueue.main.async {
@@ -472,11 +408,11 @@ final class MediaDetailsViewController: UIViewController {
         watchedButton.configuration?.baseForegroundColor = isWatched ? .onAccent : .textPrimary
         watchedButton.configuration?.image = UIImage(
             systemName: viewModel.watchedButtonSymbol,
-            withConfiguration: UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         )
         watchedButton.configuration?.attributedTitle = AttributedString(
             viewModel.watchedButtonTitle,
-            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 13, weight: .semibold)])
+            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 15, weight: .semibold)])
         )
         watchedButton.accessibilityLabel = isWatched
             ? "Watched. Double tap to unmark." : "Mark as watched"
@@ -485,12 +421,6 @@ final class MediaDetailsViewController: UIViewController {
     @objc private func connectivityChanged() {
         viewModel.connectivityDidChange()
         renderCastState()
-        renderTrailerPlaceholder()
-    }
-
-    private func renderTrailerPlaceholder() {
-        trailerPlaceholderTitleLabel.text = viewModel.trailerPlaceholderTitle
-        trailerPlaceholderSubtitleLabel.text = viewModel.trailerPlaceholderSubtitle
     }
 
     private func renderCastState() {
@@ -539,27 +469,19 @@ final class MediaDetailsViewController: UIViewController {
         present(UINavigationController(rootViewController: ticketVC), animated: true)
     }
 
-    /// The player is the last section on the screen, so this is a scroll to the bottom
-    /// in all but name — but expressed as "put the trailer under the bar", which stays
-    /// right if anything is ever added below it.
-    private func revealTrailerIfNeeded() {
-        guard revealsTrailer, !didRevealTrailer else { return }
-        didRevealTrailer = true
-
-        view.layoutIfNeeded()
-        let player = videoPlayerView.convert(videoPlayerView.bounds, to: scrollView)
-        let barBottom = view.safeAreaInsets.top + (navigationController?.navigationBar.bounds.height ?? 44)
-        let maximum = max(0, scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInset.bottom)
-        let offset = min(max(0, player.minY - barBottom - 16), maximum)
-        scrollView.setContentOffset(CGPoint(x: 0, y: offset), animated: true)
+    @objc private func trailerTapped() {
+        guard let request = viewModel.trailerRequest else { return }
+        let trailerVC = TrailerViewController(filmTitle: viewModel.title, request: request)
+        navigationController?.pushViewController(trailerVC, animated: true)
     }
 
-    private func loadYoutubeVideo(key: String) {
-        let urlString = "https://www.youtube.com/embed/\(key)?enablejsapi=1&origin=https://www.themoviedb.org"
-        guard let url = URL(string: urlString) else { return }
-        var request = URLRequest(url: url)
-        request.setValue("https://www.themoviedb.org", forHTTPHeaderField: "Referer")
-        videoPlayerView.load(request)
+    /// Home's hero "Play" opens this screen meaning "play it", so the trailer goes on
+    /// screen as soon as there is one. Only the first to arrive: pushing a player over
+    /// someone who has since started reading would be worse than not pushing at all.
+    private func openTrailerIfRequested() {
+        guard revealsTrailer, !didRevealTrailer, viewModel.trailerRequest != nil else { return }
+        didRevealTrailer = true
+        trailerTapped()
     }
 
     private func setupUI() {
@@ -572,7 +494,7 @@ final class MediaDetailsViewController: UIViewController {
         titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         metadataLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        let headerRow = UIStackView(arrangedSubviews: [headerTextStack, watchedButton])
+        let headerRow = UIStackView(arrangedSubviews: [headerTextStack, trailerButton])
         headerRow.axis = .horizontal
         headerRow.spacing = 12
         headerRow.alignment = .top
@@ -582,12 +504,10 @@ final class MediaDetailsViewController: UIViewController {
             descriptionView,
             reviewLabel,
             miniReviewView,
+            watchedButton,
             castHeaderView,
             castCollectionView,
             castPlaceholderView,
-            videoLabel,
-            videoPlayerView,
-            trailerPlaceholderView,
             similarLabel,
             similarCarouselView
         ])
@@ -596,7 +516,8 @@ final class MediaDetailsViewController: UIViewController {
         stack.spacing = 20
         stack.setCustomSpacing(10, after: reviewLabel)
         stack.setCustomSpacing(10, after: castHeaderView)
-        stack.setCustomSpacing(10, after: videoLabel)
+        // Reads as part of the review card's business rather than a section of its own.
+        stack.setCustomSpacing(12, after: miniReviewView)
         stack.setCustomSpacing(10, after: similarLabel)
         stack.translatesAutoresizingMaskIntoConstraints = false
 
@@ -636,13 +557,11 @@ final class MediaDetailsViewController: UIViewController {
 
             stack.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor, constant: -32),
 
-            videoPlayerView.heightAnchor.constraint(equalTo: videoPlayerView.widthAnchor, multiplier: 9.0 / 16.0),
-            trailerPlaceholderView.heightAnchor.constraint(equalTo: trailerPlaceholderView.widthAnchor, multiplier: 9.0 / 16.0),
             castCollectionView.heightAnchor.constraint(equalToConstant: 160),
             similarCarouselView.heightAnchor.constraint(equalToConstant: SimilarCarouselView.preferredHeight),
             castPlaceholderView.heightAnchor.constraint(equalToConstant: 160),
             // A caption beside the title, never half the row.
-            watchedButton.widthAnchor.constraint(lessThanOrEqualToConstant: 140)
+            trailerButton.widthAnchor.constraint(lessThanOrEqualToConstant: 140)
         ])
     }
 
