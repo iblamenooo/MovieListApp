@@ -26,7 +26,7 @@ final class OfflinePlaceholderView: UIView {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 19, weight: .semibold)
+        label.font = .placeholderTitle
         label.textColor = .textPrimary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -35,7 +35,7 @@ final class OfflinePlaceholderView: UIView {
 
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -48,7 +48,7 @@ final class OfflinePlaceholderView: UIView {
         config.baseForegroundColor = .accent
         config.contentInsets = .init(top: 8, leading: 20, bottom: 8, trailing: 20)
         let button = UIButton(configuration: config)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        button.titleLabel?.font = .primaryButton
         button.addTarget(self, action: #selector(retryTapped), for: .touchUpInside)
         return button
     }()

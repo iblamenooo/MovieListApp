@@ -20,7 +20,7 @@ final class FilmPickerViewController: UIViewController {
 
     private let statusLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -160,7 +160,7 @@ extension FilmPickerViewController: UITableViewDataSource, UITableViewDelegate {
             let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.backgroundColor = .clear
             cell.textLabel?.text = viewModel.manualRowTitle
-            cell.textLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+            cell.textLabel?.font = .emphasized
             cell.textLabel?.textColor = .accent
             cell.textLabel?.numberOfLines = 0
             cell.selectionStyle = .default
@@ -204,7 +204,7 @@ final class FilmResultCell: UITableViewCell {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.font = .rowTitle
         label.textColor = .textPrimary
         label.numberOfLines = 2
         return label
@@ -212,7 +212,7 @@ final class FilmResultCell: UITableViewCell {
 
     private let metaLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.font = .footnote
         label.textColor = .textSecondary
         return label
     }()
@@ -265,7 +265,7 @@ final class FilmResultCell: UITableViewCell {
             state: media.ratingState,
             year: media.year,
             genre: nil,
-            font: .systemFont(ofSize: 13, weight: .regular)
+            font: .footnote
         )
 
         guard let url = media.fullPosterURL else {

@@ -30,7 +30,7 @@ enum InitialsAvatar {
             paragraph.alignment = .center
 
             let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: size * 0.38, weight: .semibold),
+                .font: UIFont.movter(size: size * 0.38, weight: .semibold),
                 .foregroundColor: UIColor.textPrimary,
                 .paragraphStyle: paragraph
             ]

@@ -98,7 +98,7 @@ final class ProfileStatsView: UIView {
 
         private let valueLabel: UILabel = {
             let label = UILabel()
-            label.font = .systemFont(ofSize: 22, weight: .bold)
+            label.font = .statValue
             label.textColor = .textPrimary
             label.textAlignment = .center
             // A blank line rather than no line: the counts arrive asynchronously, and a
@@ -115,7 +115,7 @@ final class ProfileStatsView: UIView {
             captionLabel.attributedText = NSAttributedString(
                 string: caption,
                 attributes: [
-                    .font: UIFont.systemFont(ofSize: 11, weight: .semibold),
+                    .font: UIFont.microLabel,
                     .foregroundColor: UIColor.textSecondary,
                     .kern: 0.8
                 ]

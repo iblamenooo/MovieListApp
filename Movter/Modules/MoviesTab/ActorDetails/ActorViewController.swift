@@ -38,7 +38,7 @@ final class ActorViewController: UIViewController {
 
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.font = .movter(size: 26, weight: .bold)
         label.textColor = .textPrimary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -47,7 +47,7 @@ final class ActorViewController: UIViewController {
 
     private let subtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.font = .metadata
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -56,7 +56,7 @@ final class ActorViewController: UIViewController {
 
     private let birthplaceLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.font = .caption
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -65,7 +65,7 @@ final class ActorViewController: UIViewController {
 
     private let biographyLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .body
         label.textColor = .textPrimary
         label.numberOfLines = ActorViewController.collapsedBiographyLines
         return label
@@ -75,7 +75,7 @@ final class ActorViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("Read more", for: .normal)
         button.setTitleColor(.accent, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 15, weight: .semibold)
+        button.titleLabel?.font = .button
         button.contentHorizontalAlignment = .leading
         button.isHidden = true
         button.addTarget(self, action: #selector(toggleBiography), for: .touchUpInside)
@@ -84,7 +84,7 @@ final class ActorViewController: UIViewController {
 
     private let filmographyLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .semibold)
+        label.font = .sectionHeader
         label.text = "Filmography"
         label.textColor = .textPrimary
         return label
@@ -92,7 +92,7 @@ final class ActorViewController: UIViewController {
 
     private let emptyFilmographyLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.numberOfLines = 0
         label.isHidden = true

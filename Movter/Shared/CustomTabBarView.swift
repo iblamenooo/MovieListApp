@@ -261,7 +261,7 @@ final class CustomTabBarView: UIView {
             .withTintColor(tint, renderingMode: .alwaysOriginal)
 
         let titleAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 10, weight: .medium),
+            .font: UIFont.tabLabel,
             .foregroundColor: tint
         ]
         let title = tab.title as NSString

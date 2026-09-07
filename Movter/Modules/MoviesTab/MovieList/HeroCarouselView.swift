@@ -293,7 +293,7 @@ final class HeroCarouselCell: UICollectionViewCell {
     private let featuredBadge: ChipLabel = {
         let label = ChipLabel()
         label.text = "FEATURED"
-        label.font = .systemFont(ofSize: 11, weight: .heavy)
+        label.font = .eyebrow
         label.textColor = .black
         label.backgroundColor = .white
         label.layer.cornerRadius = 6
@@ -305,7 +305,7 @@ final class HeroCarouselCell: UICollectionViewCell {
     /// "2026 · Thriller", once the genre lookup lands.
     private let metaBadge: ChipLabel = {
         let label = ChipLabel()
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = .badge
         label.textColor = .white
         label.backgroundColor = UIColor.white.withAlphaComponent(0.18)
         label.layer.cornerRadius = 6
@@ -316,7 +316,7 @@ final class HeroCarouselCell: UICollectionViewCell {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 28, weight: .bold)
+        label.font = .screenTitle
         label.textColor = .white
         label.numberOfLines = 2
         return label
@@ -335,7 +335,7 @@ final class HeroCarouselCell: UICollectionViewCell {
         config.baseForegroundColor = .black
         config.attributedTitle = AttributedString(
             "Play",
-            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 16, weight: .semibold)])
+            attributes: AttributeContainer([.font: UIFont.primaryButton])
         )
         let button = UIButton(configuration: config)
         button.addAction(UIAction { [weak self] _ in self?.onPlay?() }, for: .touchUpInside)

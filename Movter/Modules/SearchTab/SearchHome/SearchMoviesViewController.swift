@@ -70,7 +70,7 @@ final class SearchMoviesViewController: UIViewController, UITableViewDelegate, U
     }
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         guard let header = view as? UITableViewHeaderFooterView else { return }
-        header.textLabel?.font = .systemFont(ofSize: 22, weight: .bold)
+        header.textLabel?.font = .sectionHeaderStrong
         header.textLabel?.textColor = .textPrimary
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

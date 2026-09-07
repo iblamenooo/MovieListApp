@@ -16,7 +16,7 @@ final class ReviewsListViewController: UIViewController {
 
     private let summaryLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.font = .movter(size: 13, weight: .medium)
         label.textColor = .textSecondary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -34,7 +34,7 @@ final class ReviewsListViewController: UIViewController {
     private let emptyTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "No reviews yet"
-        label.font = .systemFont(ofSize: 22, weight: .bold)
+        label.font = .emptyStateTitle
         label.textColor = .textPrimary
         label.textAlignment = .center
         return label
@@ -43,7 +43,7 @@ final class ReviewsListViewController: UIViewController {
     private let emptyBodyLabel: UILabel = {
         let label = UILabel()
         label.text = "Score a film out of ten and write down what you thought.\nOnly you can see these."
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0

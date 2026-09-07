@@ -25,7 +25,7 @@ final class WatchlistCell: UITableViewCell {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.font = .rowTitle
         label.textColor = .textPrimary
         label.numberOfLines = 2
         return label
@@ -33,7 +33,7 @@ final class WatchlistCell: UITableViewCell {
 
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.font = .fineprint
         label.textColor = .textSecondary
         return label
     }()

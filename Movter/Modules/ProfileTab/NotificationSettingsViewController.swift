@@ -161,7 +161,7 @@ extension NotificationSettingsViewController: UITableViewDelegate, UITableViewDa
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         guard let header = view as? UITableViewHeaderFooterView else { return }
         header.textLabel?.textColor = .textSecondary
-        header.textLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
+        header.textLabel?.font = .tableSectionHeader
     }
 
     func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {

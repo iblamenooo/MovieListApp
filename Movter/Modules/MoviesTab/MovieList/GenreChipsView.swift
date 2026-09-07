@@ -116,7 +116,7 @@ final class GenreChipsView: UIView {
             config?.attributedTitle = AttributedString(
                 genre.title,
                 attributes: AttributeContainer([
-                    .font: UIFont.systemFont(ofSize: 14, weight: .semibold),
+                    .font: UIFont.chip,
                     .foregroundColor: isSelected ? UIColor.onAccent : UIColor.textSecondary
                 ])
             )

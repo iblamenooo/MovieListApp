@@ -282,13 +282,13 @@ final class SwipeDeckViewController: UIViewController {
 
         let titleLabel = UILabel()
         titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
+        titleLabel.font = .movter(size: 20, weight: .bold)
         titleLabel.textColor = .textPrimary
         titleLabel.textAlignment = .center
 
         let bodyLabel = UILabel()
         bodyLabel.text = body
-        bodyLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        bodyLabel.font = .secondaryBody
         bodyLabel.textColor = .textSecondary
         bodyLabel.textAlignment = .center
         bodyLabel.numberOfLines = 0

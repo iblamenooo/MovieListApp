@@ -27,7 +27,7 @@ final class MediaCell: UICollectionViewCell {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.font = .cellTitle
         label.numberOfLines = 2
         label.textColor = .textPrimary
         return label
@@ -35,7 +35,7 @@ final class MediaCell: UICollectionViewCell {
 
     private let ratingLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
+        label.font = .fineprint
         label.textColor = .textPrimary
         return label
     }()
@@ -45,7 +45,7 @@ final class MediaCell: UICollectionViewCell {
     /// and half of its range is invisible against a dark chip.
     private let ratingBadgeLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = .badge
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -64,7 +64,7 @@ final class MediaCell: UICollectionViewCell {
 
     private let placeholderLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 11, weight: .semibold)
+        label.font = .microLabel
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 2

@@ -25,7 +25,7 @@ final class SectionHeaderView: UICollectionReusableView {
 
         titleLabel.textColor = .textSecondary
         actionButton.setTitleColor(.accent, for: .normal)
-        actionButton.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
+        actionButton.titleLabel?.font = .captionButton
         actionButton.setContentHuggingPriority(.required, for: .horizontal)
         actionButton.addTarget(self, action: #selector(fire), for: .touchUpInside)
 
@@ -48,7 +48,7 @@ final class SectionHeaderView: UICollectionReusableView {
         // A tracked, uppercase label — the app's small-caps section style.
         titleLabel.attributedText = title.map {
             NSAttributedString(string: $0.uppercased(), attributes: [
-                .font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+                .font: UIFont.captionButton,
                 .foregroundColor: UIColor.textSecondary,
                 .kern: 0.8
             ])
@@ -86,7 +86,7 @@ final class QueryRowCell: UICollectionViewCell {
         iconView.contentMode = .scaleAspectFit
         iconView.setContentHuggingPriority(.required, for: .horizontal)
 
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .body
         label.textColor = .textPrimary
 
         let stack = UIStackView(arrangedSubviews: [iconView, label])
@@ -136,7 +136,7 @@ final class TermRowCell: UICollectionViewCell {
         iconView.contentMode = .scaleAspectFit
         iconView.setContentHuggingPriority(.required, for: .horizontal)
 
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .body
         label.textColor = .textPrimary
 
         let stack = UIStackView(arrangedSubviews: [iconView, label])
@@ -181,12 +181,12 @@ final class TrendingRowCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        let rounded = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        let rounded = UIFont.emphasized
         rankLabel.font = UIFont(descriptor: rounded.fontDescriptor.withDesign(.rounded) ?? rounded.fontDescriptor, size: 15)
         rankLabel.textAlignment = .center
         rankLabel.setContentHuggingPriority(.required, for: .horizontal)
 
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = .movter(size: 16, weight: .medium)
         label.textColor = .textPrimary
 
         let stack = UIStackView(arrangedSubviews: [rankLabel, label])
@@ -280,7 +280,7 @@ final class ChipCell: UICollectionViewCell {
 
     var onDelete: (() -> Void)?
 
-    private static let font = UIFont.systemFont(ofSize: 14, weight: .medium)
+    private static let font = UIFont.movter(size: 14, weight: .medium)
     private static let leadingPadding: CGFloat = 14
     private static let labelToButtonGap: CGFloat = 6
     private static let buttonSize: CGFloat = 16

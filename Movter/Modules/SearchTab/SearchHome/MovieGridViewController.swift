@@ -41,7 +41,7 @@ final class MovieGridViewController: UIViewController {
 
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .body
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0

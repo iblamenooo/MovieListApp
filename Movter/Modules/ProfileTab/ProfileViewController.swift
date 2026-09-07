@@ -45,7 +45,7 @@ final class ProfileViewController: UIViewController {
 
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .bold)
+        label.font = .profileName
         label.textColor = .textPrimary
         label.textAlignment = .center
         label.numberOfLines = 1
@@ -57,7 +57,7 @@ final class ProfileViewController: UIViewController {
 
     private let memberSinceLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.font = .footnote
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 1
@@ -386,7 +386,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         guard let header = view as? UITableViewHeaderFooterView else { return }
         header.textLabel?.textColor = .textSecondary
-        header.textLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
+        header.textLabel?.font = .tableSectionHeader
     }
 }
 

@@ -25,7 +25,7 @@ final class ReviewCell: UITableViewCell {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.font = .rowTitle
         label.textColor = .textPrimary
         label.numberOfLines = 2
         return label
@@ -33,13 +33,13 @@ final class ReviewCell: UITableViewCell {
 
     private let scoreLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.font = .emphasisCaption
         return label
     }()
 
     private let snippetLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.font = .caption
         label.textColor = .textSecondary
         label.numberOfLines = 2
         return label
@@ -47,7 +47,7 @@ final class ReviewCell: UITableViewCell {
 
     private let dateLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.font = .fineprint
         label.textColor = .textSecondary
         return label
     }()
@@ -105,7 +105,7 @@ final class ReviewCell: UITableViewCell {
         titleLabel.text = review.titleWithYear
         scoreLabel.attributedText = RatingFormatter.attributedPersonalScore(
             review.score,
-            font: .systemFont(ofSize: 14, weight: .semibold)
+            font: .emphasisCaption
         )
 
         snippetLabel.text = review.hasReviewText ? review.reviewText : nil

@@ -20,7 +20,7 @@ final class HomeHeaderView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Movter"
-        label.font = .systemFont(ofSize: 28, weight: .bold)
+        label.font = .screenTitle
         label.textColor = .textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

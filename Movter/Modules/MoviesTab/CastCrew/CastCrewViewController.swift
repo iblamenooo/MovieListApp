@@ -17,7 +17,7 @@ final class CastCrewViewController: UIViewController {
 
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -106,7 +106,7 @@ extension CastCrewViewController: UITableViewDataSource, UITableViewDelegate {
 
         let label = UILabel()
         label.text = title
-        label.font = .systemFont(ofSize: 19, weight: .semibold)
+        label.font = .groupHeader
         label.textColor = .textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(label)

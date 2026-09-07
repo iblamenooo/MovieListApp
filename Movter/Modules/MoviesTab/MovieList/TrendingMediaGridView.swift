@@ -18,7 +18,7 @@ final class TrendingMediaGridView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = MovieGenre.all.sectionTitle
-        label.font = .systemFont(ofSize: 22, weight: .bold)
+        label.font = .sectionHeaderStrong
         label.textColor = .textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -27,7 +27,7 @@ final class TrendingMediaGridView: UIView {
     private lazy var seeAllButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("See all", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        button.titleLabel?.font = .linkButton
         button.setTitleColor(.textSecondary, for: .normal)
         button.addAction(UIAction { [weak self] _ in self?.onSeeAllSelected?() }, for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

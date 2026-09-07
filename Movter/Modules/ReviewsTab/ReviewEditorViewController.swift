@@ -54,7 +54,7 @@ final class ReviewEditorViewController: UIViewController {
 
     private let filmTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.font = .movter(size: 17, weight: .semibold)
         label.textColor = .textPrimary
         label.numberOfLines = 2
         return label
@@ -62,7 +62,7 @@ final class ReviewEditorViewController: UIViewController {
 
     private let filmSubtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.font = .footnote
         label.textColor = .textSecondary
         label.numberOfLines = 1
         return label
@@ -85,7 +85,7 @@ final class ReviewEditorViewController: UIViewController {
 
     private let scoreValueLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        label.font = .emphasized
         label.textColor = .textSecondary
         label.textAlignment = .right
         return label
@@ -93,7 +93,7 @@ final class ReviewEditorViewController: UIViewController {
 
     private lazy var reviewTextView: UITextView = {
         let textView = UITextView()
-        textView.font = .systemFont(ofSize: 16, weight: .regular)
+        textView.font = .body
         textView.textColor = .textPrimary
         textView.backgroundColor = .surface
         textView.layer.cornerRadius = 12
@@ -107,7 +107,7 @@ final class ReviewEditorViewController: UIViewController {
     private let reviewPlaceholderLabel: UILabel = {
         let label = UILabel()
         label.text = "What did you make of it?"
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .body
         label.textColor = .textSecondary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -115,7 +115,7 @@ final class ReviewEditorViewController: UIViewController {
 
     private let counterLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.font = .fineprint
         label.textColor = .textSecondary
         label.textAlignment = .right
         return label
@@ -228,7 +228,7 @@ final class ReviewEditorViewController: UIViewController {
     private func sectionLabel(_ text: String) -> UILabel {
         let label = UILabel()
         label.text = text
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = .fieldLabel
         label.textColor = .textSecondary
         return label
     }

@@ -56,7 +56,7 @@ final class ExpandableTextLabel: UIView {
 
     private let label: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .body
         label.textColor = .textPrimary
         // Fixed at 0: re-flowing on toggle would make the text jump mid-animation.
         label.numberOfLines = 0

@@ -37,7 +37,7 @@ final class TicketViewController: UIViewController {
         label.attributedText = NSAttributedString(
             string: "ADDED TO YOUR COLLECTION",
             attributes: [
-                .font: UIFont.systemFont(ofSize: 11, weight: .semibold),
+                .font: UIFont.microLabel,
                 .foregroundColor: UIColor.textSecondary,
                 .kern: 1.4
             ]
@@ -69,7 +69,7 @@ final class TicketViewController: UIViewController {
         config.contentInsets = NSDirectionalEdgeInsets(top: 14, leading: 18, bottom: 14, trailing: 18)
         config.attributedTitle = AttributedString(
             "Share Ticket",
-            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 16, weight: .semibold)])
+            attributes: AttributeContainer([.font: UIFont.primaryButton])
         )
         let button = UIButton(configuration: config)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -199,7 +199,7 @@ final class TicketStubView: UIView {
         label.attributedText = NSAttributedString(
             string: "TICKET STUB",
             attributes: [
-                .font: UIFont.systemFont(ofSize: 11, weight: .bold),
+                .font: UIFont.movter(size: 11, weight: .bold),
                 .foregroundColor: UIColor.textSecondary,
                 .kern: 1.2
             ]
@@ -209,7 +209,7 @@ final class TicketStubView: UIView {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .cardTitle
         label.textColor = .textPrimary
         label.numberOfLines = 2
         return label
@@ -217,14 +217,14 @@ final class TicketStubView: UIView {
 
     private let watchedLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.font = .caption
         label.textColor = .textSecondary
         return label
     }()
 
     private let scoreLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        label.font = .emphasized
         label.textAlignment = .right
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
@@ -232,7 +232,7 @@ final class TicketStubView: UIView {
 
     private let noteLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textPrimary
         label.numberOfLines = 0
         return label

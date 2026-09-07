@@ -13,7 +13,7 @@ class LoginViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Welcome Back"
-        label.font = .systemFont(ofSize: 28, weight: .bold)
+        label.font = .screenTitle
         label.textColor = .textPrimary
         label.textAlignment = .center
         return label
@@ -46,7 +46,7 @@ class LoginViewController: UIViewController {
         button.backgroundColor = .accent
         button.setTitleColor(.onAccent, for: .normal)
         button.layer.cornerRadius = 8
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        button.titleLabel?.font = .prominentButton
         return button
     }()
     

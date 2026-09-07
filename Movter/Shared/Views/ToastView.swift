@@ -62,7 +62,7 @@ final class ToastView: UIView {
 
         let label = UILabel()
         label.text = message
-        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.font = .metadata
         label.textColor = .textPrimary
         label.numberOfLines = 2
 

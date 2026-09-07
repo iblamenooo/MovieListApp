@@ -45,7 +45,7 @@ final class SearchOverlayViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("Cancel", for: .normal)
         button.setTitleColor(.textPrimary, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.font = .body
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -86,7 +86,7 @@ final class SearchOverlayViewController: UIViewController {
     private let emptyLabel: UILabel = {
         let label = UILabel()
         label.text = "Search for films by title"
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0

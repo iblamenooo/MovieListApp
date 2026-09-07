@@ -38,7 +38,7 @@ final class TrailerViewController: UIViewController {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.font = .movter(size: 20, weight: .semibold)
         label.textColor = .textPrimary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -58,7 +58,7 @@ final class TrailerViewController: UIViewController {
     /// would read as a broken app rather than a missing connection.
     private let failureLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0

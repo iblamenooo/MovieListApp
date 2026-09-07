@@ -16,7 +16,7 @@ final class GenreChipGridView: UIView {
 
     var onSelect: ((MovieGenre) -> Void)?
 
-    private static let font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+    private static let font = UIFont.emphasized
     private static let chipHeight: CGFloat = 42
     /// Padding either side of a chip's title.
     private static let chipPadding: CGFloat = 20

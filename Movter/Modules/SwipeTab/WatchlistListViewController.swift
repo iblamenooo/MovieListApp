@@ -25,7 +25,7 @@ final class WatchlistListViewController: UIViewController {
 
     private let emptyTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .bold)
+        label.font = .emptyStateTitle
         label.textColor = .textPrimary
         label.textAlignment = .center
         return label
@@ -33,7 +33,7 @@ final class WatchlistListViewController: UIViewController {
 
     private let emptyBodyLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0

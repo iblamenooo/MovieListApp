@@ -33,7 +33,7 @@ enum RatingFormatter {
                 line.append(NSAttributedString(
                     string: "  · \(votes) vote\(votes == 1 ? "" : "s")",
                     attributes: [
-                        .font: UIFont.systemFont(ofSize: font.pointSize * 0.85, weight: .regular),
+                        .font: UIFont.movter(size: font.pointSize * 0.85, weight: .regular),
                         .foregroundColor: UIColor.textSecondary
                     ]
                 ))

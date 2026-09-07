@@ -25,7 +25,7 @@ class ActorsCell:UICollectionViewCell {
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.font = .cellTitle
         label.textAlignment = .center
         label.textColor = .textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -34,7 +34,7 @@ class ActorsCell:UICollectionViewCell {
     
     private let characterLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.font = .fineprint
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.textColor = .textPrimary

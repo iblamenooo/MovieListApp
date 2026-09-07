@@ -29,7 +29,7 @@ final class CreditCell: UITableViewCell {
 
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.font = .rowTitle
         label.textColor = .textPrimary
         label.numberOfLines = 1
         return label
@@ -37,7 +37,7 @@ final class CreditCell: UITableViewCell {
 
     private let roleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.font = .caption
         label.textColor = .textSecondary
         label.numberOfLines = 1
         return label

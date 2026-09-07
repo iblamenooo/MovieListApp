@@ -60,7 +60,7 @@ final class MediaDetailsViewController: UIViewController {
         )
         config.attributedTitle = AttributedString(
             "Trailer",
-            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+            attributes: AttributeContainer([.font: UIFont.capsuleButton])
         )
         config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 18)
         let button = UIButton(configuration: config)
@@ -101,7 +101,7 @@ final class MediaDetailsViewController: UIViewController {
     /// "★ 7.9/10 · 2026 · Science Fiction"
     private let metadataLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.font = .metadata
         label.textColor = .textPrimary
         label.numberOfLines = 1
         // Shares its row with the watched button, so it has less width to shrink into
@@ -114,7 +114,7 @@ final class MediaDetailsViewController: UIViewController {
 
     private let descriptionView: ExpandableTextLabel = {
         let view = ExpandableTextLabel()
-        view.font = .systemFont(ofSize: 16, weight: .regular)
+        view.font = .body
         view.collapsedLineLimit = 4
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -134,7 +134,7 @@ final class MediaDetailsViewController: UIViewController {
     
     private let castLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .semibold)
+        label.font = .sectionHeader
         label.text = "Cast & Crew"
         label.textColor = .textPrimary
         label.setContentHuggingPriority(.required, for: .horizontal)
@@ -190,7 +190,7 @@ final class MediaDetailsViewController: UIViewController {
 
     private let similarLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .semibold)
+        label.font = .sectionHeader
         label.text = "More Like This"
         label.textColor = .textPrimary
         label.isHidden = true
@@ -207,7 +207,7 @@ final class MediaDetailsViewController: UIViewController {
 
     private let reviewLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .semibold)
+        label.font = .sectionHeader
         label.text = "Your Review"
         label.textColor = .textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -223,14 +223,14 @@ final class MediaDetailsViewController: UIViewController {
     // Held as properties so the copy can switch between "empty" and "failed".
     private let castPlaceholderTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 19, weight: .semibold)
+        label.font = .placeholderTitle
         label.textColor = .textPrimary
         return label
     }()
 
     private let castPlaceholderSubtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.font = .caption
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -423,7 +423,7 @@ final class MediaDetailsViewController: UIViewController {
         )
         watchlistButton.configuration?.attributedTitle = AttributedString(
             viewModel.watchlistButtonTitle,
-            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+            attributes: AttributeContainer([.font: UIFont.capsuleButton])
         )
         watchlistButton.accessibilityLabel = isInWatchlist
             ? "In your watchlist. Double tap to remove." : "Add to watchlist"
@@ -441,7 +441,7 @@ final class MediaDetailsViewController: UIViewController {
         )
         watchedButton.configuration?.attributedTitle = AttributedString(
             viewModel.watchedButtonTitle,
-            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 15, weight: .semibold)])
+            attributes: AttributeContainer([.font: UIFont.button])
         )
         watchedButton.accessibilityLabel = isWatched
             ? "Watched. Double tap to unmark." : "Mark as watched"

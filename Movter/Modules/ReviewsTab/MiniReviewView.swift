@@ -39,7 +39,7 @@ final class MiniReviewView: UIView {
 
     private let scoreValueLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        label.font = .emphasized
         label.textColor = .textSecondary
         label.textAlignment = .right
         label.setContentHuggingPriority(.required, for: .horizontal)
@@ -48,7 +48,7 @@ final class MiniReviewView: UIView {
 
     private lazy var textView: UITextView = {
         let textView = UITextView()
-        textView.font = .systemFont(ofSize: 15, weight: .regular)
+        textView.font = .secondaryBody
         textView.textColor = .textPrimary
         textView.backgroundColor = .canvas
         textView.layer.cornerRadius = 10
@@ -63,7 +63,7 @@ final class MiniReviewView: UIView {
     private let placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "Add a short opinion (optional)"
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = .secondaryBody
         label.textColor = .textSecondary
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -97,7 +97,7 @@ final class MiniReviewView: UIView {
         config.contentInsets = NSDirectionalEdgeInsets(top: 11, leading: 18, bottom: 11, trailing: 18)
         config.attributedTitle = AttributedString(
             "See ticket",
-            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 15, weight: .semibold)])
+            attributes: AttributeContainer([.font: UIFont.button])
         )
         let button = UIButton(configuration: config)
         button.addTarget(self, action: #selector(ticketTapped), for: .touchUpInside)
@@ -107,7 +107,7 @@ final class MiniReviewView: UIView {
 
     private let statusLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.font = .fineprint
         label.textColor = .textSecondary
         label.numberOfLines = 0
         return label

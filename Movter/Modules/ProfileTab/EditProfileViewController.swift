@@ -26,7 +26,7 @@ final class EditProfileViewController: UIViewController {
     private let avatarHintLabel: UILabel = {
         let label = UILabel()
         label.text = "Your avatar is generated from your name"
-        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.font = .footnote
         label.textColor = .textSecondary
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -36,14 +36,14 @@ final class EditProfileViewController: UIViewController {
     private let nameFieldLabel: UILabel = {
         let label = UILabel()
         label.text = "DISPLAY NAME"
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = .fieldLabel
         label.textColor = .textSecondary
         return label
     }()
 
     private lazy var nameTextField: UITextField = {
         let field = UITextField()
-        field.font = .systemFont(ofSize: 17, weight: .regular)
+        field.font = .movter(size: 17, weight: .regular)
         field.textColor = .textPrimary
         field.backgroundColor = .surface
         field.layer.cornerRadius = 10
@@ -69,14 +69,14 @@ final class EditProfileViewController: UIViewController {
     private let emailFieldLabel: UILabel = {
         let label = UILabel()
         label.text = "EMAIL"
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = .fieldLabel
         label.textColor = .textSecondary
         return label
     }()
 
     private let emailValueLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.font = .movter(size: 17, weight: .regular)
         label.textColor = .textSecondary
         label.numberOfLines = 0
         return label
@@ -85,7 +85,7 @@ final class EditProfileViewController: UIViewController {
     private let emailHintLabel: UILabel = {
         let label = UILabel()
         label.text = "Your email is tied to your sign-in and can't be changed here."
-        label.font = .systemFont(ofSize: 13, weight: .regular)
+        label.font = .footnote
         label.textColor = .textSecondary
         label.numberOfLines = 0
         return label

@@ -45,7 +45,7 @@ final class SwipeCardView: UIView {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .cardTitle
         label.textColor = .white
         label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -142,14 +142,14 @@ final class SwipeCardView: UIView {
 
         let meta = NSMutableAttributedString(attributedString: RatingFormatter.attributedRating(
             media.ratingState,
-            font: .systemFont(ofSize: 15, weight: .semibold),
+            font: .emphasized,
             textColor: .white
         ))
         if let year = media.year {
             meta.append(NSAttributedString(
                 string: "  ·  \(year)",
                 attributes: [
-                    .font: UIFont.systemFont(ofSize: 15, weight: .medium),
+                    .font: UIFont.metadata,
                     .foregroundColor: UIColor.white.withAlphaComponent(0.85)
                 ]
             ))
@@ -297,7 +297,7 @@ final class SwipeCardView: UIView {
 
         let label = UILabel()
         label.text = caption
-        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.font = .movter(size: 18, weight: .bold)
         label.textColor = tint
 
         let stack = UIStackView(arrangedSubviews: [icon, label])
