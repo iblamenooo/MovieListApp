@@ -13,12 +13,18 @@ final class MediaDetailsViewModel {
     private let watchedStore: WatchlistStoring
     private let watchlistStore: WatchlistStoring
     var onVideoUpdate: ((String?) -> Void)?
-    var onActorsUpdate: (() -> Void)?
+    var onCreditsUpdate: (() -> Void)?
     var actors: [Actor] = []
+    /// Not shown on this screen — the carousel is cast only — but carried here so the
+    /// cast and crew list opens on what has already been fetched.
+    private(set) var crew: [CrewMember] = []
     /// Distinguishes "still loading" from "loaded and genuinely empty", so the
     /// placeholder can't flash before the request comes back.
     private(set) var hasLoadedActors = false
     private(set) var didFailToLoadActors = false
+
+    /// The header only leads somewhere once there is a list behind it.
+    var hasCredits: Bool { !actors.isEmpty || !crew.isEmpty }
     var title: String { media.displayName }
     var overview: String { media.overview }
     var posterPath: String { media.posterPath ?? "" }
@@ -153,7 +159,7 @@ final class MediaDetailsViewModel {
     /// Retries whichever pieces came back empty once a connection returns.
     func connectivityDidChange() {
         guard monitor.isOnline else { return }
-        if actors.isEmpty { fetchActors() }
+        if actors.isEmpty { fetchCredits() }
         fetchTrailer()
     }
 
@@ -202,15 +208,22 @@ final class MediaDetailsViewModel {
         }
     }
     
-    func fetchActors() {
-        service.fetchActors(for: media.id, type: mediaType) { [weak self] fetchedActors in
+    func fetchCredits() {
+        service.fetchCredits(for: media.id, type: mediaType) { [weak self] credits in
             guard let self = self else { return }
             // A nil result means the request or decode failed. Bailing out here (as this
             // used to) left the screen with no way to know the fetch was ever attempted.
-            self.didFailToLoadActors = (fetchedActors == nil)
-            self.actors = fetchedActors ?? []
+            self.didFailToLoadActors = (credits == nil)
+            self.actors = credits?.cast ?? []
+            self.crew = credits?.crew ?? []
             self.hasLoadedActors = true
-            self.onActorsUpdate?()
+            self.onCreditsUpdate?()
         }
+    }
+
+    /// The full list, built from what this screen already holds so it opens without a
+    /// second round trip.
+    func makeCastCrewViewModel() -> CastCrewViewModel {
+        CastCrewViewModel(mediaTitle: title, cast: actors, crew: crew)
     }
 }

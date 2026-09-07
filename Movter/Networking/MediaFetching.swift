@@ -22,9 +22,9 @@ protocol MediaFetching: AnyObject {
         completion: @escaping @MainActor (String?) -> Void
     )
 
-    func fetchActors(
+    func fetchCredits(
         for id: Int, type: MediaType,
-        completion: @escaping @MainActor ([Actor]?) -> Void
+        completion: @escaping @MainActor (MovieCredits?) -> Void
     )
 
     func fetchGenres(

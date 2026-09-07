@@ -83,11 +83,11 @@ final class NetworkService {
         }
     }
     
-    func fetchActors(for id: Int, type: MediaType, completion: @escaping @MainActor ([Actor]?) -> Void) {
+    /// Cast and crew arrive on the same call, so this hands back the whole payload
+    /// rather than the cast alone — the cast and crew screen needs both halves.
+    func fetchCredits(for id: Int, type: MediaType, completion: @escaping @MainActor (MovieCredits?) -> Void) {
         let urlString = "\(baseURL)/\(type.path)/\(id)/credits?api_key=\(apiKey)"
-        performRequest(urlString: urlString) { (result: MovieCredits?) in
-            completion(result?.cast)
-        }
+        performRequest(urlString: urlString, completion: completion)
     }
     
     func fetchGenres(type: MediaType, completion: @escaping @MainActor ([GenreListResponse.Genre]?) -> Void) {

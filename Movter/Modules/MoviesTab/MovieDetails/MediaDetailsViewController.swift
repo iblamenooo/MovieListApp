@@ -110,10 +110,57 @@ final class MediaDetailsViewController: UIViewController {
     private let castLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .semibold)
-        label.text = "Cast"
+        label.text = "Cast & Crew"
         label.textColor = .textPrimary
+        label.setContentHuggingPriority(.required, for: .horizontal)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+
+    private let castChevronView: UIImageView = {
+        let iv = UIImageView(image: UIImage(
+            systemName: "chevron.right",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 15, weight: .semibold)
+        ))
+        iv.tintColor = .textSecondary
+        iv.contentMode = .scaleAspectFit
+        iv.setContentHuggingPriority(.required, for: .horizontal)
+        return iv
+    }()
+
+    /// The section heading doubles as the way into the full credits. A control rather
+    /// than a tap gesture, so it disables itself when there is nothing behind it and
+    /// reads as a button to VoiceOver.
+    private lazy var castHeaderView: UIControl = {
+        let control = UIControl()
+        control.addTarget(self, action: #selector(showCastAndCrew), for: .touchUpInside)
+        control.isAccessibilityElement = true
+        control.accessibilityTraits = .button
+        control.accessibilityLabel = "Cast and crew"
+        control.accessibilityHint = "Shows the full cast and crew list"
+        control.translatesAutoresizingMaskIntoConstraints = false
+
+        // Keeps the label and chevron together on the left instead of spreading the
+        // heading across the whole row.
+        let spacer = UIView()
+        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
+        let row = UIStackView(arrangedSubviews: [castLabel, castChevronView, spacer])
+        row.axis = .horizontal
+        row.spacing = 6
+        row.alignment = .center
+        // The control takes the touch; the stack is only layout.
+        row.isUserInteractionEnabled = false
+        row.translatesAutoresizingMaskIntoConstraints = false
+
+        control.addSubview(row)
+        NSLayoutConstraint.activate([
+            row.topAnchor.constraint(equalTo: control.topAnchor),
+            row.bottomAnchor.constraint(equalTo: control.bottomAnchor),
+            row.leadingAnchor.constraint(equalTo: control.leadingAnchor),
+            row.trailingAnchor.constraint(equalTo: control.trailingAnchor)
+        ])
+        return control
     }()
 
     private let reviewLabel: UILabel = {
@@ -280,7 +327,7 @@ final class MediaDetailsViewController: UIViewController {
         renderWatchedState()
         viewModel.loadWatchedState()
         viewModel.fetchTrailer()
-        viewModel.fetchActors()
+        viewModel.fetchCredits()
         viewModel.fetchGenre()
 
         // The star is rasterised with the accent baked in, so it can't repaint itself
@@ -335,7 +382,7 @@ final class MediaDetailsViewController: UIViewController {
                 self.trailerPlaceholderView.isHidden = false
             }
         }
-        viewModel.onActorsUpdate = { [weak self] in
+        viewModel.onCreditsUpdate = { [weak self] in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 self.castCollectionView.reloadData()
@@ -425,6 +472,18 @@ final class MediaDetailsViewController: UIViewController {
         castPlaceholderSubtitleLabel.text = viewModel.castPlaceholderSubtitle
         castPlaceholderView.isHidden = !showPlaceholder
         castCollectionView.isHidden = showPlaceholder
+
+        // Nothing to push to until the credits are in, so the heading stays a heading.
+        castHeaderView.isEnabled = viewModel.hasCredits
+        castChevronView.isHidden = !viewModel.hasCredits
+        castHeaderView.accessibilityTraits = viewModel.hasCredits ? .button : .header
+    }
+
+    /// Cast and crew in full, on the same credits this screen already holds.
+    @objc private func showCastAndCrew() {
+        guard viewModel.hasCredits else { return }
+        let castCrewVC = CastCrewViewController(viewModel: viewModel.makeCastCrewViewModel())
+        navigationController?.pushViewController(castCrewVC, animated: true)
     }
 
     private func renderMetadata() {
@@ -486,7 +545,7 @@ final class MediaDetailsViewController: UIViewController {
             descriptionView,
             reviewLabel,
             miniReviewView,
-            castLabel,
+            castHeaderView,
             castCollectionView,
             castPlaceholderView,
             videoLabel,
@@ -497,7 +556,7 @@ final class MediaDetailsViewController: UIViewController {
         stack.axis = .vertical
         stack.spacing = 20
         stack.setCustomSpacing(10, after: reviewLabel)
-        stack.setCustomSpacing(10, after: castLabel)
+        stack.setCustomSpacing(10, after: castHeaderView)
         stack.setCustomSpacing(10, after: videoLabel)
         stack.translatesAutoresizingMaskIntoConstraints = false
 
