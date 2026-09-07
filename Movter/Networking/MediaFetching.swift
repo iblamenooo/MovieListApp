@@ -27,6 +27,11 @@ protocol MediaFetching: AnyObject {
         completion: @escaping @MainActor (MovieCredits?) -> Void
     )
 
+    func fetchSimilar(
+        for id: Int, type: MediaType,
+        completion: @escaping @MainActor ([Media]?) -> Void
+    )
+
     func fetchGenres(
         type: MediaType,
         completion: @escaping @MainActor ([GenreListResponse.Genre]?) -> Void

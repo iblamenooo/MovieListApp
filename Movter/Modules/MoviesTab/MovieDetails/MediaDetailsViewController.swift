@@ -12,6 +12,8 @@ final class MediaDetailsViewController: UIViewController {
 
     private let viewModel: MediaDetailsViewModel
     private let scrollView = UIScrollView()
+    /// Flies a poster from the "More Like This" row into the next details screen.
+    private let posterTransition = PosterTransitionController()
     /// True once the poster has scrolled up behind the navigation bar.
     private var isBarCollapsed = false
     /// How much of the scroll view the keyboard currently covers.
@@ -161,6 +163,23 @@ final class MediaDetailsViewController: UIViewController {
             row.trailingAnchor.constraint(equalTo: control.trailingAnchor)
         ])
         return control
+    }()
+
+    private let similarLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 22, weight: .semibold)
+        label.text = "More Like This"
+        label.textColor = .textPrimary
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let similarCarouselView: SimilarCarouselView = {
+        let view = SimilarCarouselView()
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
 
     private let reviewLabel: UILabel = {
@@ -328,6 +347,7 @@ final class MediaDetailsViewController: UIViewController {
         viewModel.loadWatchedState()
         viewModel.fetchTrailer()
         viewModel.fetchCredits()
+        viewModel.fetchSimilar()
         viewModel.fetchGenre()
 
         // The star is rasterised with the accent baked in, so it can't repaint itself
@@ -389,6 +409,9 @@ final class MediaDetailsViewController: UIViewController {
                 self.renderCastState()
             }
         }
+        viewModel.onSimilarUpdate = { [weak self] in
+            DispatchQueue.main.async { self?.renderSimilar() }
+        }
         viewModel.onGenreUpdate = { [weak self] in
             DispatchQueue.main.async { self?.renderMetadata() }
         }
@@ -397,6 +420,12 @@ final class MediaDetailsViewController: UIViewController {
             // Don't overwrite the field mid-sentence if a reload lands while typing.
             guard !self.miniReviewView.isEditingOpinion else { return }
             self.miniReviewView.configure(with: self.viewModel.existingReview)
+        }
+
+        similarCarouselView.onSelect = { [weak self] media in
+            guard let self = self else { return }
+            let detailsVC = MediaDetailsViewController(viewModel: MediaDetailsViewModel(media: media))
+            self.posterTransition.push(detailsVC, for: media, from: self)
         }
 
         // Runs inside the reveal animation so the rest of the screen moves in step.
@@ -486,6 +515,14 @@ final class MediaDetailsViewController: UIViewController {
         navigationController?.pushViewController(castCrewVC, animated: true)
     }
 
+    /// An empty shelf is no shelf: the heading goes with it rather than standing over
+    /// a blank strip.
+    private func renderSimilar() {
+        similarCarouselView.update(with: viewModel.similar)
+        similarLabel.isHidden = !viewModel.hasSimilar
+        similarCarouselView.isHidden = !viewModel.hasSimilar
+    }
+
     private func renderMetadata() {
         metadataLabel.attributedText = RatingFormatter.metadataLine(
             state: viewModel.ratingState,
@@ -550,7 +587,9 @@ final class MediaDetailsViewController: UIViewController {
             castPlaceholderView,
             videoLabel,
             videoPlayerView,
-            trailerPlaceholderView
+            trailerPlaceholderView,
+            similarLabel,
+            similarCarouselView
         ])
 
         stack.axis = .vertical
@@ -558,6 +597,7 @@ final class MediaDetailsViewController: UIViewController {
         stack.setCustomSpacing(10, after: reviewLabel)
         stack.setCustomSpacing(10, after: castHeaderView)
         stack.setCustomSpacing(10, after: videoLabel)
+        stack.setCustomSpacing(10, after: similarLabel)
         stack.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(scrollView)
@@ -599,6 +639,7 @@ final class MediaDetailsViewController: UIViewController {
             videoPlayerView.heightAnchor.constraint(equalTo: videoPlayerView.widthAnchor, multiplier: 9.0 / 16.0),
             trailerPlaceholderView.heightAnchor.constraint(equalTo: trailerPlaceholderView.widthAnchor, multiplier: 9.0 / 16.0),
             castCollectionView.heightAnchor.constraint(equalToConstant: 160),
+            similarCarouselView.heightAnchor.constraint(equalToConstant: SimilarCarouselView.preferredHeight),
             castPlaceholderView.heightAnchor.constraint(equalToConstant: 160),
             // A caption beside the title, never half the row.
             watchedButton.widthAnchor.constraint(lessThanOrEqualToConstant: 140)
@@ -613,7 +654,9 @@ final class MediaDetailsViewController: UIViewController {
     /// `contentInsetAdjustmentBehavior` is `.never`, so the bottom inset is ours to
     /// maintain. One owner, so layout and the keyboard can't overwrite each other.
     private func updateScrollInsets() {
-        let bottom = max(view.safeAreaInsets.bottom, keyboardOverlap)
+        // The floating tab bar hangs over this screen too, so the last section has to be
+        // able to scroll clear of it — the same clearance the tab roots reserve.
+        let bottom = max(view.safeAreaInsets.bottom + MainTabBarController.contentClearance, keyboardOverlap)
         guard scrollView.contentInset.bottom != bottom else { return }
         scrollView.contentInset.bottom = bottom
         scrollView.verticalScrollIndicatorInsets.bottom = bottom
@@ -746,6 +789,14 @@ extension MediaDetailsViewController: UIGestureRecognizerDelegate {
 
 
 // MARK: - Poster transition
+
+extension MediaDetailsViewController: PosterTransitionSource {
+
+    /// The recommendation the tap started from, when it's still scrolled into view.
+    func transitionPoster(forMediaID id: Int) -> PosterTransitionAnchor? {
+        similarCarouselView.transitionPoster(forMediaID: id)
+    }
+}
 
 extension MediaDetailsViewController: PosterTransitionDestination {
 

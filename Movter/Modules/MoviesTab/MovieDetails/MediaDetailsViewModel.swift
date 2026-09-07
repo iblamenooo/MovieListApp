@@ -25,6 +25,18 @@ final class MediaDetailsViewModel {
 
     /// The header only leads somewhere once there is a list behind it.
     var hasCredits: Bool { !actors.isEmpty || !crew.isEmpty }
+
+    // MARK: - More like this
+
+    /// What the row shows. TMDB pages are twenty long; the rest is never scrolled to.
+    static let similarLimit = 8
+
+    private(set) var similar: [Media] = []
+    var onSimilarUpdate: (() -> Void)?
+
+    /// The row is hidden rather than placeheld: a recommendation shelf with nothing in
+    /// it is better left out than explained.
+    var hasSimilar: Bool { !similar.isEmpty }
     var title: String { media.displayName }
     var overview: String { media.overview }
     var posterPath: String { media.posterPath ?? "" }
@@ -160,6 +172,7 @@ final class MediaDetailsViewModel {
     func connectivityDidChange() {
         guard monitor.isOnline else { return }
         if actors.isEmpty { fetchCredits() }
+        if similar.isEmpty { fetchSimilar() }
         fetchTrailer()
     }
 
@@ -218,6 +231,17 @@ final class MediaDetailsViewModel {
             self.crew = credits?.crew ?? []
             self.hasLoadedActors = true
             self.onCreditsUpdate?()
+        }
+    }
+
+    func fetchSimilar() {
+        service.fetchSimilar(for: media.id, type: mediaType) { [weak self] items in
+            guard let self = self else { return }
+            self.similar = Array(
+                // TMDB occasionally recommends a title alongside itself.
+                (items ?? []).filter { $0.id != self.media.id }.prefix(Self.similarLimit)
+            )
+            self.onSimilarUpdate?()
         }
     }
 

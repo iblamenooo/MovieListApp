@@ -90,6 +90,31 @@ final class NetworkService {
         performRequest(urlString: urlString, completion: completion)
     }
     
+    /// What to watch after this one. TMDB's recommendations come from what audiences
+    /// actually went on to watch, so they lead; `similar` — matched on genre and
+    /// keywords — is the fallback for titles nobody has recommendations for yet.
+    ///
+    /// Nil only when both requests fail. An empty list is a real answer.
+    func fetchSimilar(for id: Int, type: MediaType, completion: @escaping @MainActor ([Media]?) -> Void) {
+        performRequest(urlString: relatedTitlesURL("recommendations", for: id, type: type)) { (recommended: MovieResponse?) in
+            if let results = recommended?.results, !results.isEmpty {
+                completion(results)
+                return
+            }
+            self.performRequest(urlString: self.relatedTitlesURL("similar", for: id, type: type)) { (similar: MovieResponse?) in
+                guard let results = similar?.results else {
+                    completion(recommended == nil ? nil : [])
+                    return
+                }
+                completion(results)
+            }
+        }
+    }
+
+    private func relatedTitlesURL(_ path: String, for id: Int, type: MediaType) -> String {
+        "\(baseURL)/\(type.path)/\(id)/\(path)?api_key=\(apiKey)&language=en-US&page=1"
+    }
+
     func fetchGenres(type: MediaType, completion: @escaping @MainActor ([GenreListResponse.Genre]?) -> Void) {
         let urlString = "\(baseURL)/genre/\(type.path)/list?api_key=\(apiKey)&language=en-US"
         performRequest(urlString: urlString) { (result: GenreListResponse?) in
