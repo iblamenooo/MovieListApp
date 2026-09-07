@@ -53,6 +53,35 @@ final class MediaDetailsViewModel {
     private(set) var genreName: String?
     var onGenreUpdate: (() -> Void)?
 
+    // MARK: - Watchlist
+
+    private(set) var isInWatchlist = false
+    var onWatchlistChange: (() -> Void)?
+
+    var watchlistButtonTitle: String { isInWatchlist ? "In watchlist" : "Add to watchlist" }
+    var watchlistButtonSymbol: String { isInWatchlist ? "bookmark.fill" : "bookmark" }
+
+    func loadWatchlistState() {
+        watchlistStore.fetchAll { [weak self] result in
+            guard let self = self, case let .success(items) = result else { return }
+            self.isInWatchlist = items.contains { $0.tmdbID == self.media.id }
+            self.onWatchlistChange?()
+        }
+    }
+
+    func toggleWatchlist() {
+        isInWatchlist.toggle()
+        onWatchlistChange?()
+
+        guard isInWatchlist else {
+            remove(media.id, from: watchlistStore)
+            return
+        }
+        // The whole film, for the same reason the watched list stores it: the list has
+        // to render posters and titles without going back to TMDB for every row.
+        watchlistStore.save(WatchlistItem(from: media)) { _ in }
+    }
+
     // MARK: - Watched
 
     private(set) var isWatched = false
@@ -84,6 +113,10 @@ final class MediaDetailsViewModel {
         // A film you have seen is no longer one you are waiting to see. Unmarking does
         // not put it back: the watchlist is a list you curate, not a mirror of this flag.
         remove(media.id, from: watchlistStore)
+        // The watchlist button shares the header with this one, so it can't be left
+        // offering to remove a film that has just been taken off the list.
+        isInWatchlist = false
+        onWatchlistChange?()
     }
 
     /// Scoring a film is a claim to have seen it, so a rating carries the flag with it.

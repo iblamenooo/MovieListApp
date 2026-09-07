@@ -45,15 +45,6 @@ final class MediaDetailsViewController: UIViewController {
         return iv
     }()
 
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 28, weight: .bold)
-        label.numberOfLines = 0
-        label.textColor = .textPrimary
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
     /// The way into the trailer, beside the title where the artwork it belongs to is.
     /// Hidden until a trailer is known to exist — a button that leads to an empty
     /// player is worse than no button.
@@ -74,11 +65,21 @@ final class MediaDetailsViewController: UIViewController {
         config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 18)
         let button = UIButton(configuration: config)
         button.addTarget(self, action: #selector(trailerTapped), for: .touchUpInside)
-        // The title yields to it, so the film name wraps instead of the button shrinking.
-        button.setContentCompressionResistancePriority(.required, for: .horizontal)
-        button.setContentHuggingPriority(.required, for: .horizontal)
         button.isHidden = true
         button.accessibilityHint = "Plays the trailer"
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    /// Takes the film name's place at the top of the page: the poster carries the title,
+    /// and the header carries what you can do about it.
+    private lazy var watchlistButton: UIButton = {
+        var config = UIButton.Configuration.filled()
+        config.cornerStyle = .capsule
+        config.imagePadding = 6
+        config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 18)
+        let button = UIButton(configuration: config)
+        button.addTarget(self, action: #selector(watchlistTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -288,7 +289,9 @@ final class MediaDetailsViewController: UIViewController {
         configure()
         bindViewModel()
         renderWatchedState()
+        renderWatchlistState()
         viewModel.loadWatchedState()
+        viewModel.loadWatchlistState()
         viewModel.fetchTrailer()
         viewModel.fetchCredits()
         viewModel.fetchSimilar()
@@ -317,7 +320,6 @@ final class MediaDetailsViewController: UIViewController {
     }
     
     private func configure() {
-        titleLabel.text = viewModel.title
         descriptionView.text = viewModel.overview
         descriptionView.isHidden = viewModel.overview.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         renderMetadata()
@@ -332,6 +334,9 @@ final class MediaDetailsViewController: UIViewController {
     private func bindViewModel() {
         viewModel.onWatchedChange = { [weak self] in
             self?.renderWatchedState()
+        }
+        viewModel.onWatchlistChange = { [weak self] in
+            self?.renderWatchlistState()
         }
         viewModel.onVideoUpdate = { [weak self] _ in
             guard let self = self else { return }
@@ -395,17 +400,41 @@ final class MediaDetailsViewController: UIViewController {
     @objc private func themeDidChange() {
         renderMetadata()
         renderWatchedState()
+        renderWatchlistState()
     }
 
     @objc private func watchedTapped() {
         viewModel.toggleWatched()
     }
 
-    /// Filled once it is true, so the state reads at a glance rather than from the verb.
+    @objc private func watchlistTapped() {
+        viewModel.toggleWatchlist()
+    }
+
+    /// Filled while the film is still on the list, quiet once it is — the opposite way
+    /// round from Mark as watched, whose invitation is the thing worth highlighting.
+    private func renderWatchlistState() {
+        let isInWatchlist = viewModel.isInWatchlist
+        watchlistButton.configuration?.baseBackgroundColor = isInWatchlist ? .accent : .surface
+        watchlistButton.configuration?.baseForegroundColor = isInWatchlist ? .onAccent : .textPrimary
+        watchlistButton.configuration?.image = UIImage(
+            systemName: viewModel.watchlistButtonSymbol,
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+        )
+        watchlistButton.configuration?.attributedTitle = AttributedString(
+            viewModel.watchlistButtonTitle,
+            attributes: AttributeContainer([.font: UIFont.systemFont(ofSize: 14, weight: .semibold)])
+        )
+        watchlistButton.accessibilityLabel = isInWatchlist
+            ? "In your watchlist. Double tap to remove." : "Add to watchlist"
+    }
+
+    /// Filled while it is still an invitation and quiet once it has been taken — the
+    /// same way Save Review carries its own weight only while there is something to do.
     private func renderWatchedState() {
         let isWatched = viewModel.isWatched
-        watchedButton.configuration?.baseBackgroundColor = isWatched ? .accent : .surface
-        watchedButton.configuration?.baseForegroundColor = isWatched ? .onAccent : .textPrimary
+        watchedButton.configuration?.baseBackgroundColor = isWatched ? .surface : .accent
+        watchedButton.configuration?.baseForegroundColor = isWatched ? .textPrimary : .onAccent
         watchedButton.configuration?.image = UIImage(
             systemName: viewModel.watchedButtonSymbol,
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
@@ -487,17 +516,31 @@ final class MediaDetailsViewController: UIViewController {
     private func setupUI() {
         // The poster is pinned to the scroll view directly; only the text below it is
         // inset, which is what lets the artwork run edge to edge.
-        let headerTextStack = UIStackView(arrangedSubviews: [titleLabel, metadataLabel])
-        headerTextStack.axis = .vertical
-        headerTextStack.spacing = 10
-        // Lets the title wrap under the button rather than pushing it off the row.
-        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         metadataLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        let headerRow = UIStackView(arrangedSubviews: [headerTextStack, trailerButton])
-        headerRow.axis = .horizontal
+        // The pair spans the content width, roughly 70/30 in the watchlist button's
+        // favour — it carries the longer label and is the more common thing to want.
+        // A hidden button drops out of a stack, so with no trailer the first one takes
+        // the whole row.
+        let actionRow = UIStackView(arrangedSubviews: [watchlistButton, trailerButton])
+        actionRow.axis = .horizontal
+        actionRow.spacing = 10
+        actionRow.alignment = .fill
+        actionRow.distribution = .fill
+
+        // Just short of required: above the equal widths the stack fills with by
+        // default, but still under the trailer button's own text, so a narrow screen
+        // widens it rather than truncating the label to hold the ratio.
+        let splitRatio = trailerButton.widthAnchor.constraint(
+            equalTo: watchlistButton.widthAnchor, multiplier: 3.0 / 7.0
+        )
+        splitRatio.priority = UILayoutPriority(999)
+        splitRatio.isActive = true
+        trailerButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        let headerRow = UIStackView(arrangedSubviews: [actionRow, metadataLabel])
+        headerRow.axis = .vertical
         headerRow.spacing = 12
-        headerRow.alignment = .top
 
         let stack = UIStackView(arrangedSubviews: [
             headerRow,
@@ -559,9 +602,7 @@ final class MediaDetailsViewController: UIViewController {
 
             castCollectionView.heightAnchor.constraint(equalToConstant: 160),
             similarCarouselView.heightAnchor.constraint(equalToConstant: SimilarCarouselView.preferredHeight),
-            castPlaceholderView.heightAnchor.constraint(equalToConstant: 160),
-            // A caption beside the title, never half the row.
-            trailerButton.widthAnchor.constraint(lessThanOrEqualToConstant: 140)
+            castPlaceholderView.heightAnchor.constraint(equalToConstant: 160)
         ])
     }
 
@@ -639,6 +680,7 @@ final class MediaDetailsViewController: UIViewController {
         // Keeps the review card in step with edits made elsewhere.
         viewModel.loadReview()
         viewModel.loadWatchedState()
+        viewModel.loadWatchlistState()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
